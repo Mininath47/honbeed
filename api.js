@@ -8,13 +8,43 @@ const PORT = process.env.PORT || 7000;
 
 var app = express();
 app.use(cors());
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({extended:true})); 
 app.use(express.json());
 
 app.get("/foods", (req, res)=>{
     mongoClient.connect(conString).then(clientObject=>{
         var database  = clientObject.db("e-com");
         database.collection("foods").find({}).toArray().then(documents=>{
+            res.send(documents);
+            res.end();
+        });
+    });
+});
+
+app.get("/dairy", (req, res)=>{
+    mongoClient.connect(conString).then(clientObject=>{
+        var database  = clientObject.db("e-com");
+        database.collection("dairy").find({}).toArray().then(documents=>{
+            res.send(documents);
+            res.end();
+        });
+    });
+});
+
+app.get("/veg", (req, res)=>{
+    mongoClient.connect(conString).then(clientObject=>{
+        var database  = clientObject.db("e-com");
+        database.collection("vegetarian").find({}).toArray().then(documents=>{
+            res.send(documents);
+            res.end();
+        });
+    });
+});
+
+app.get("/drinks", (req, res)=>{
+    mongoClient.connect(conString).then(clientObject=>{
+        var database  = clientObject.db("e-com");
+        database.collection("drinks").find({}).toArray().then(documents=>{
             res.send(documents);
             res.end();
         });
