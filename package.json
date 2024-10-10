@@ -9,7 +9,10 @@
   "name": "hyddata",
   "version": "1.0.0",
   "main": "api.js",
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.7.5"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon api.js"

@@ -1,157 +1,178 @@
 var express = require("express");
 var cors = require("cors");
-require('dotenv').config();
 var mongoClient = require("mongodb").MongoClient;
+
+require('dotenv').config();
 var conString = process.env.DB_URL;
 const PORT = process.env.PORT || 7000;
 
-
 var app = express();
 app.use(cors());
-app.use(express.urlencoded({extended:true})); 
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.get("/foods", (req, res)=>{
-    mongoClient.connect(conString).then(clientObject=>{
-        var database  = clientObject.db("e-com");
-        database.collection("foods").find({}).toArray().then(documents=>{
+app.get("/foods", (req, res) => {
+    mongoClient.connect(conString).then(clientObject => {
+        var database = clientObject.db("e-com");
+        database.collection("foods").find({}).toArray().then(documents => {
             res.send(documents);
             res.end();
         });
     });
 });
 
-app.get("/dairy", (req, res)=>{
-    mongoClient.connect(conString).then(clientObject=>{
-        var database  = clientObject.db("e-com");
-        database.collection("dairy").find({}).toArray().then(documents=>{
+
+app.delete("/foods/:title", (req, res) => {
+
+    var id = parseInt(req.params.title);
+
+    mongoClient.connect(conString).then(clientObject => {
+        var database = clientObject.db("e-com");
+        database.collection("foods").deleteOne({ UserId: title }).then(() => {
+            console.log("Task-Deleted");
+            res.end();
+        });
+    });
+});
+
+app.get("/dairy", (req, res) => {
+    mongoClient.connect(conString).then(clientObject => {
+        var database = clientObject.db("e-com");
+        database.collection("dairy").find({}).toArray().then(documents => {
             res.send(documents);
             res.end();
         });
     });
 });
 
-app.get("/veg", (req, res)=>{
-    mongoClient.connect(conString).then(clientObject=>{
-        var database  = clientObject.db("e-com");
-        database.collection("vegetarian").find({}).toArray().then(documents=>{
+app.get("/veg", (req, res) => {
+    mongoClient.connect(conString).then(clientObject => {
+        var database = clientObject.db("e-com");
+        database.collection("vegetarian").find({}).toArray().then(documents => {
             res.send(documents);
             res.end();
         });
     });
 });
 
-app.get("/drinks", (req, res)=>{
-    mongoClient.connect(conString).then(clientObject=>{
-        var database  = clientObject.db("e-com");
-        database.collection("drinks").find({}).toArray().then(documents=>{
+app.get("/drinks", (req, res) => {
+    mongoClient.connect(conString).then(clientObject => {
+        var database = clientObject.db("e-com");
+        database.collection("drinks").find({}).toArray().then(documents => {
             res.send(documents);
             res.end();
         });
     });
 });
 
-app.get("/foods/:categories", (req, res)=>{
+app.get("/foods/:categories", (req, res) => {
 
-    mongoClient.connect(conString).then(clientObject=>{
-            var database  = clientObject.db("e-com");
-            database.collection("foods").find({category:req.params.categories}).toArray().then(documents=>{
-                res.send(documents);
-                res.end();
-            });
+    mongoClient.connect(conString).then(clientObject => {
+        var database = clientObject.db("e-com");
+        database.collection("foods").find({ category: req.params.categories }).toArray().then(documents => {
+            res.send(documents);
+            res.end();
+        });
     });
 });
-app.get("/users", (req, res)=>{
-    mongoClient.connect(conString).then(clientObject=>{
-        var database  = clientObject.db("e-com");
-        database.collection("users").find({}).toArray().then(documents=>{
+app.get("/users", (req, res) => {
+    mongoClient.connect(conString).then(clientObject => {
+        var database = clientObject.db("e-com");
+        database.collection("users").find({}).toArray().then(documents => {
             res.send(documents);
             res.end();
         });
     });
 });
 
-app.post("/useradd", (req, res)=>{
-      var user = {
-          UserId: req.body.UserId,
-          UserName: req.body.UserName,
-          Password: req.body.Password,
-          Mobile: req.body.Mobile,
-          Email:req.body.Email
-      };
-
-      mongoClient.connect(conString).then(clientObject=>{
-           var database = clientObject.db("e-com");
-           database.collection("users").insertOne(user).then(()=>{
-                console.log("User Added..");
-                res.end();
-           });
-      });
-
-
+app.get('/storeProduct', (req, res) => {
+    mongoClient.connect(conString).then(object => {
+        const database = object.db('e-com');
+        database.collection('storeproduct').find({}).toArray().then((document) => {
+            res.send(document);
+            res.end();
+        })
+    })
 });
 
-app.get("/users/:userid", (req, res)=>{
+app.post('/storeProduct', (req, res) => {
+    const storeData = {
+        id          : req.body.id,
+        title       : req.body.title,
+        price       : req.body.price,
+        description : req.body.description,
+        category    : req.body.category,
+        image       : req.body.image,
+        UserId      : req.body.UserId
 
-    mongoClient.connect(conString).then(clientObject=>{
-            var database  = clientObject.db("e-com");
-            database.collection("users").find({UserId:req.params.userid}).toArray().then(documents=>{
-                res.send(documents);
-                res.end();
-            });
-    });
-});
 
-// app.get("/users/:id", (req, res)=>{
+    }
 
-//     mongoClient.connect(conString).then(clientObject=>{
-//             var database  = clientObject.db("e-com");
-//             database.collection("users").find({UserId:parseInt(req.params.id)}).toArray().then(documents=>{
-//                 res.send(documents);
-//                 res.end();
-//             });
-//     });
-// });
+    mongoClient.connect(conString).then(object => {
+        const database = object.db('e-com');
+        database.collection('storeproduct').insertOne(storeData).then(() => {
+            console.log('data is add...');
+            res.end();
+        })
+    })
+})
 
-// app.post("/add-task", (req, res)=>{
-//      var task = {
-//           Appointment_Id: parseInt(req.body.Appointment_Id),
-//           Title: req.body.Title,
-//           Description: req.body.Description,
-//           Date: new Date(req.body.Date),
-//           UserId: req.body.UserId
-//      }
-//      mongoClient.connect(conString).then(clientObject=>{
-//           var database = clientObject.db("sampledb");
-//           database.collection("appointments").insertOne(task).then(()=>{
-//                console.log("Task Added");
-//                res.end();
-//           })
-//      })
-// });
+app.delete("/storeProduct/:id", (req, res)=>{
 
-// app.put("/edit-task/:id", (req, res)=>{
-//      var id = parseInt(req.params.id);
-//      mongoClient.connect(conString).then(clientObject=>{
-//             var database = clientObject.db("sampledb");
-//             database.collection("appointments").updateOne({Appointment_Id:id},{$set: {Appointment_Id:id, Title:req.body.Title, Description: req.body.Description, Date: new Date(req.body.Date), UserId: req.body.UserId}}).then(()=>{
-//                 console.log("Task-Updated");
-//                 res.end();
-//             });
-//      });
-// });
-
-app.delete("/users/:id", (req, res)=>{
-
-    var id = parseInt(req.params.id);
+    var Id = parseInt(req.params.id);
 
     mongoClient.connect(conString).then(clientObject=>{
         var database = clientObject.db("e-com");
-        database.collection("users").deleteOne({UserId:id}).then(()=>{
+        database.collection("storeproduct").deleteOne({id:Id}).then(()=>{
               console.log("Task-Deleted");
               res.end();
         });
      });
+});
+
+
+app.post("/useradd", (req, res) => {
+    var user = {
+        UserId: req.body.UserId,
+        UserName: req.body.UserName,
+        Password: req.body.Password,
+        Mobile: req.body.Mobile,
+        Email: req.body.Email
+    };
+
+    mongoClient.connect(conString).then(clientObject => {
+        var database = clientObject.db("e-com");
+        database.collection("users").insertOne(user).then(() => {
+            console.log("User Added..");
+            res.end();
+        });
+    });
+
+
+});
+
+app.get("/users/:userid", (req, res) => {
+
+    mongoClient.connect(conString).then(clientObject => {
+        var database = clientObject.db("e-com");
+        database.collection("users").find({ UserId: req.params.userid }).toArray().then(documents => {
+            res.send(documents);
+            res.end();
+        });
+    });
+});
+
+app.delete("/users/:id", (req, res) => {
+
+    var id = parseInt(req.params.id);
+
+    mongoClient.connect(conString).then(clientObject => {
+        var database = clientObject.db("e-com");
+        database.collection("users").deleteOne({ UserId: id }).then(() => {
+            console.log("Task-Deleted");
+            res.end();
+        });
+    });
 });
 
 
